@@ -32,6 +32,12 @@ let activeUser;
 let users = [];
 let processedMessages = [];
 let outputDir;
+const cssDir = path.join(process.cwd(), "css")
+const jsDir = path.join(process.cwd(), "js")
+const cssFile = path.join(cssDir, "styles.css")
+const cssPlayer = path.join(cssDir, "player.css")
+const jsFile = path.join(jsDir, "player.js")
+
 const processSpinner = createSpinner('Processing messages....');
 const generatingChatSpinner = createSpinner('Generating chat....');
 async function welcome() {
@@ -108,6 +114,8 @@ async function getUsers() {
 
 }
 async function processChat() {
+    processSpinner.success({ text: `Chat successfully processed` });
+    processSpinner.stop();
     generatingChatSpinner.start()
     await parseString(chatContent, { parseAttachments: true })
         .then(messages => {
@@ -167,12 +175,11 @@ async function renderChat(messages) {
         if (err) {
             return console.error(`Failed to generate file: ${err.message}.`);
         }
-        console.log(`Saved template!`);
     });
 }
 async function copyStaticFiles() {
     await new Promise((resolve, reject) => {
-        fs.copy(`./css/styles.css`, `./${outputDir}/css/styles.css`, (err) => {
+        fs.copy(path.resolve(__dirname, 'css/styles.css'), `./${outputDir}/css/styles.css`, (err) => {
             if (err) {
                 reject(err)
             }
@@ -180,7 +187,7 @@ async function copyStaticFiles() {
         })
     })
     await new Promise((resolve, reject) => {
-        fs.copy(`./css/player.css`, `./${outputDir}/css/player.css`, (err) => {
+        fs.copy(path.resolve(__dirname, 'css/player.css'), `./${outputDir}/css/player.css`, (err) => {
             if (err) {
                 reject(err)
             }
@@ -188,14 +195,14 @@ async function copyStaticFiles() {
         })
     })
     await new Promise((resolve, reject) => {
-        fs.copy(`./js/player.js`, `./${outputDir}/js/player.js`, (err) => {
+        fs.copy(path.resolve(__dirname, 'js/player.js'), `./${outputDir}/js/player.js`, (err) => {
             if (err) {
                 reject(err)
             }
             resolve()
         })
     })
-    generatingChatSpinner.stop()
+    generatingChatSpinner.success({ text: `Chat generated successfully` });
 }
 async function Done() {
     console.log(`${chalk.bgBlue('HTML Chat generated successfully!')}
