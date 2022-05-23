@@ -25,12 +25,16 @@
   },
   "homepage": "https://github.com/gossterrible/whatsapp2html#readme",
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^1.4.1",
     "chalk": "^5.0.1",
     "chalk-animation": "^2.0.2",
     "eta": "^1.12.3",
+    "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4",
     "linkify-html": "^3.0.5",
+    "linkifyjs": "^3.0.5",
     "nanospinner": "^1.1.0",
     "unzipper": "^0.10.11",
     "whatsapp-chat-parser": "^3.2.1"

@@ -1,9 +1,9 @@
 <% if ( it.message.fileMimeType && it.message.fileMimeType.startsWith("video/")) { %>
-<video preload="auto" controls title="<%=   it.message.attachment.fileName %>">
-    <source src="output/<%=  it.message.attachment.fileName%>" type="<%= it.message.fileMimeType %>" />
+<video preload="metadata" controls playsinline title="<%=   it.message.attachment.fileName %>#t=0.001">
+    <source src="output/<%=  it.message.attachment.fileName%>#t=0.001" type="<%= it.message.fileMimeType %>" />
 </video>
 <% } else if( it.message.fileMimeType && it.message.fileMimeType.startsWith("audio/")) { %>
- <div class="player" ><audio preload="auto"  src="output/<%=  it.message.attachment.fileName %>"title="<%=  it.message.attachment.fileName %>" /></div>
+ <div class="player" ><audio preload="none"  src="output/<%=  it.message.attachment.fileName %>"title="<%=  it.message.attachment.fileName %>" type="<%= it.message.fileMimeType %>" /></div>
 <% } else if( it.message.fileMimeType && it.message.fileMimeType.startsWith("image/")) { %>
 <img loading="lazy" src="output/<%=  it.message.attachment.fileName %>" title="<%= it.message.attachment.fileName %>" alt="" />
 <% } else { %>

@@ -4,7 +4,10 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import chalkAnimation from "chalk-animation";
 import { Extract } from "unzipper";
-import { createReadStream, readFileSync, writeFile } from 'fs';
+
+import Ffmpeg from "fluent-ffmpeg";
+
+import { createReadStream, readFileSync, writeFile, readdirSync } from 'fs';
 import *  as fs from "fs-extra";
 import { fileURLToPath } from 'url';
 import { parseString } from "whatsapp-chat-parser"
@@ -133,6 +136,9 @@ async function processChat() {
                     })
                 }
                 if (message.attachment) {
+                    if (getMimeType(message?.attachment?.fileName) == "audio/ogg") {
+                        message.attachment.fileName = message.attachment.fileName.replace(".opus", ".mp3")
+                    }
                     processedMessages.push({
                         ...message,
                         date: new Intl.DateTimeFormat('en-US', intlOptions).format(message.date),
@@ -176,6 +182,31 @@ async function renderChat(messages) {
             return console.error(`Failed to generate file: ${err.message}.`);
         }
     });
+}
+async function convertOpusToMp3() {
+    const spinner = createSpinner('Converting audio files....').start();
+    const files = readdirSync(`./${outputDir}/output`)
+    for (const file of files) {
+        if (file.endsWith('.opus')) {
+            const fileName = file.split('.')[0]
+            const filePath = `./${outputDir}/output/${file}`
+            const outputPath = `./${outputDir}/output/${fileName}.mp3`
+            await new Promise((resolve, reject) => {
+                Ffmpeg(filePath)
+                    .toFormat('mp3')
+                    .on('end', () => {
+                        spinner.success({ text: `${fileName} converted to mp3` });
+                        resolve()
+                    })
+                    .on('error', (err) => {
+                        spinner.fail({ text: `${fileName} failed to convert to mp3` });
+                        reject(err)
+                    })
+                    .save(outputPath)
+            })
+        }
+    }
+    spinner.stop();
 }
 async function copyStaticFiles() {
     await new Promise((resolve, reject) => {
@@ -233,6 +264,7 @@ await welcome();
 await askBackup();
 await askOutputDir();
 await unzipBackup();
+await convertOpusToMp3();
 await readChatFile();
 await getUsers();
 await askActiveUser();
