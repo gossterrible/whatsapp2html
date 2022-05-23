@@ -6,6 +6,12 @@ import chalkAnimation from "chalk-animation";
 import { Extract } from "unzipper";
 
 import Ffmpeg from "fluent-ffmpeg";
+import ffprobe from "@ffprobe-installer/ffprobe";
+import ffmpeg from "@ffmpeg-installer/ffmpeg";
+Ffmpeg.setFfprobePath(ffprobe.path);
+Ffmpeg.setFfmpegPath(ffmpeg.path);
+
+
 
 import { createReadStream, readFileSync, writeFile, readdirSync } from 'fs';
 import *  as fs from "fs-extra";
