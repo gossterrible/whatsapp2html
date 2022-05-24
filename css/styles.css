@@ -439,6 +439,7 @@
   -webkit-justify-content: end;
   -ms-flex-pack: end;
   justify-content: end;
+  float: right;
 }
 @media (max-width: 699px) {
   .rjqjE {
