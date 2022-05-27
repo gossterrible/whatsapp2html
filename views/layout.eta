@@ -10,12 +10,14 @@
     <link rel="stylesheet" type="text/css" href="css/player.css">
     <script src="js/player.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.4.0/css/lightgallery-bundle.min.css">
+
 </head>
 
 <body>
     <div class="style__Container-sc-4md8lx-0 jFxnvp" >
         <div class="style__Container-sc-18l3uan-0 dVOSKJ">
-            <ul class="style__List-sc-18l3uan-1 bYCQXm">
+            <ul id="chat" class="style__List-sc-18l3uan-1 bYCQXm">
                 <li class="style__Item-sc-10xojq4-0 bhKFpW" style="margin-bottom: 25px!important;">
                     <div class="style__Bubble-sc-10xojq4-1 dbZlEC">
                         <div class="style__Wrapper-sc-10xojq4-2 bTFExH">
@@ -37,6 +39,12 @@
             selector: '.player', 
             stopOthersOnPlay: true
         });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.4.0/lightgallery.umd.min.js"></script>
+    <script type="text/javascript">
+    lightGallery(document.getElementById('chat'), {
+        selector: '.gallery-item',
+    });
     </script>
 </body>
 

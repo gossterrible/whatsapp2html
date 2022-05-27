@@ -5,8 +5,8 @@
 <% } else if( it.message.fileMimeType && it.message.fileMimeType.startsWith("audio/")) { %>
  <div class="player" ><audio preload="metadata"  src="output/<%=  it.message.attachment.fileName %>"title="<%=  it.message.attachment.fileName %>" type="<%= it.message.fileMimeType %>" /></div>
 <% } else if( it.message.fileMimeType && it.message.fileMimeType.startsWith("image/")) { %>
-<img loading="lazy" src="output/<%=  it.message.attachment.fileName %>" title="<%= it.message.attachment.fileName %>" alt="" />
+<a class="gallery-item" data-src="output/<%=  it.message.attachment.fileName %>"><img loading="lazy" src="output/<%=  it.message.attachment.fileName %>" title="<%= it.message.attachment.fileName %>" alt="" /></a>
 <% } else { %>
-<a href="#" download="output/<%=  it.message.attachment.fileName %>">
+<a href="output/<%=  it.message.attachment.fileName %>" download="output/<%=  it.message.attachment.fileName %>">
     "<%=  it.message.attachment.fileName %>"</a>
 <% } %>

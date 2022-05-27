@@ -572,3 +572,7 @@ body,
   margin: 0;
   border: 0;
 }
+.lg-backdrop.in {
+  opacity: 0.8 !important;
+  background-color: #eee !important;
+}
