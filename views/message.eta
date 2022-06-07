@@ -6,20 +6,21 @@
    </li>
 <% } else if (it.activeUser === true) { %>
 <li class="style__Item-sc-10xojq4-0 lhojvt">
+    <div class="style__Bubble-sc-10xojq4-1 jezoRX">
+        <div class="style__Wrapper-sc-10xojq4-2 bTFExH">
+            <div class="style__Message-sc-10xojq4-4 "><% if (it.fileMimeType !== ""){ %><%~ includeFile('./attachment',  {message:it}) %><% } else { %><div class="iIXscr"> <%~ it.message %></div><% } %></div>
+            <time datetime="<%=  it.date %>" class="style__Date-sc-10xojq4-5 rjqjE"><%=  it.date %></time>
+        </div>
+    </div>
+</li>
+
+<% } else { %>
+<li class="style__Item-sc-10xojq4-0 gwVsKX">
     <div class="style__Bubble-sc-10xojq4-1 eYnoeS">
         <div class="style__Wrapper-sc-10xojq4-2 bTFExH">
             <div class="style__Message-sc-10xojq4-4 "><% if (it.fileMimeType !== "") { %><%~ includeFile('./attachment', {message:it}) %><% } else { %><div class="iIXscr"><%~ it.message %></div><% } %></div>
             <time datetime="<%=  it.date %>" class="style__Date-sc-10xojq4-5 rjqjE"><%=  it.date %>
             </time>
-        </div>
-    </div>
-</li>
-<% } else { %>
-<li class="style__Item-sc-10xojq4-0  gwVsKX">
-    <div class="style__Bubble-sc-10xojq4-1 jezoRX">
-        <div class="style__Wrapper-sc-10xojq4-2 bTFExH">
-            <div class="style__Message-sc-10xojq4-4 "><% if (it.fileMimeType !== ""){ %><%~ includeFile('./attachment',  {message:it}) %><% } else { %><div class="iIXscr"> <%~ it.message %></div><% } %></div>
-            <time datetime="<%=  it.date %>" class="style__Date-sc-10xojq4-5 rjqjE"><%=  it.date %></time>
         </div>
     </div>
 </li>
