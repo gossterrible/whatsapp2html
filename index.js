@@ -22,7 +22,7 @@ import path from "path";
 import linkifyHtml from 'linkify-html';
 import { createSpinner } from 'nanospinner'
 
-const options = { defaultProtocol: 'https', target: '_blank' };
+const options = { defaultProtocol: 'http', target: '_blank' };
 const intlOptions = {
     hour: 'numeric',
     minute: 'numeric',
