@@ -131,14 +131,19 @@ async function processChat() {
             messages.shift() //remove first message (whatsapp notice)
             messages.map((message, i, arr) => {
                 const prevMessage = arr[i - 1];
+                const  date = new Date(message.date)
+                let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
+                let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(date);
+                let da = new Intl.DateTimeFormat('en', { day: 'numeric' }).format(date);
+                let formated_date = `${mo} ${da}, ${ye}`
                 if (i === 0) {
                     processedMessages.push({
-                        messageDate: new Date(message.date).toLocaleString('en-US', dateOptions),
+                        messageDate: formated_date,
                     })
                 }
                 if (prevMessage && new Date(prevMessage.date).toDateString() !== new Date(message.date).toDateString()) {
                     processedMessages.push({
-                        messageDate: new Date(message.date).toLocaleString('en-US', dateOptions),
+                        messageDate: formated_date,
                     })
                 }
                 if (message.attachment) {
