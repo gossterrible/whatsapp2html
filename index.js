@@ -1,26 +1,28 @@
 #!/usr/bin/env node
 
-import chalk from "chalk";
-import inquirer from "inquirer";
-import chalkAnimation from "chalk-animation";
-import { Extract } from "unzipper";
+import * as Eta from "eta"
+import *  as fs from "fs-extra";
 
+import { createReadStream, readFileSync, readdirSync, writeFile } from 'fs';
+
+import { Extract } from "unzipper";
 import Ffmpeg from "fluent-ffmpeg";
-import ffprobe from "@ffprobe-installer/ffprobe";
+import chalk from "chalk";
+import chalkAnimation from "chalk-animation";
+import { createSpinner } from 'nanospinner'
 import ffmpeg from "@ffmpeg-installer/ffmpeg";
+import ffprobe from "@ffprobe-installer/ffprobe";
+import { fileURLToPath } from 'url';
+import inquirer from "inquirer";
+import linkifyHtml from 'linkify-html';
+import { parseString } from "whatsapp-chat-parser"
+import path from "path";
+
 Ffmpeg.setFfprobePath(ffprobe.path);
 Ffmpeg.setFfmpegPath(ffmpeg.path);
 
 
 
-import { createReadStream, readFileSync, writeFile, readdirSync } from 'fs';
-import *  as fs from "fs-extra";
-import { fileURLToPath } from 'url';
-import { parseString } from "whatsapp-chat-parser"
-import * as Eta from "eta"
-import path from "path";
-import linkifyHtml from 'linkify-html';
-import { createSpinner } from 'nanospinner'
 
 const options = { defaultProtocol: 'http', target: '_blank' };
 const intlOptions = {
@@ -38,6 +40,7 @@ const sleep = (ms = 2000) => new Promise((r) => setTimeout(r, ms));
 let backupFile;
 let chatContent;
 let activeUser;
+let phone_number;
 let users = [];
 let processedMessages = [];
 let outputDir;
@@ -186,8 +189,20 @@ async function askActiveUser() {
 
     activeUser = answers.active_user;
 }
-async function renderChat(messages) {
-    let chat = await Eta.renderFile("./layout", { messages: messages })
+async function askPhoneNumber() {
+    const answers = await inquirer.prompt({
+        name: 'phone_number',
+        type: 'string',
+        message: 'Phone number:',
+        default() {
+            return '+92 316 8664208';
+        },
+    });
+    phone_number = answers.phone_number;
+}
+
+async function renderChat(messages, phone_number) {
+    let chat = await Eta.renderFile("./layout", { messages: messages, phone_number: phone_number })
     writeFile(`./${outputDir}/index.html`, chat, err => {
         if (err) {
             return console.error(`Failed to generate file: ${err.message}.`);
@@ -279,7 +294,8 @@ await convertOpusToMp3();
 await readChatFile();
 await getUsers();
 await askActiveUser();
+await askPhoneNumber();
 await processChat();
-await renderChat(processedMessages)
+await renderChat(processedMessages, phone_number)
 await copyStaticFiles();
 await Done();
