@@ -10,13 +10,18 @@ import Ffmpeg from "fluent-ffmpeg";
 import chalk from "chalk";
 import chalkAnimation from "chalk-animation";
 import { createSpinner } from 'nanospinner'
+import decompress from "decompress";
 import ffmpeg from "@ffmpeg-installer/ffmpeg";
 import ffprobe from "@ffprobe-installer/ffprobe";
 import { fileURLToPath } from 'url';
+import {getLinkPreview} from 'link-preview-js';
 import inquirer from "inquirer";
 import linkifyHtml from 'linkify-html';
 import { parseString } from "whatsapp-chat-parser"
 import path from "path";
+
+const VERSION = '1.0.20';
+
 
 Ffmpeg.setFfprobePath(ffprobe.path);
 Ffmpeg.setFfmpegPath(ffmpeg.path);
@@ -54,12 +59,12 @@ const processSpinner = createSpinner('Processing messages....');
 const generatingChatSpinner = createSpinner('Generating chat....');
 async function welcome() {
     const rainbowTitle = chalkAnimation.rainbow(
-        'WhatsApp 2 HTML Converter \n'
+        `WhatsApp 2 HTML Converter  version:${VERSION}\n`
     );
 
     await sleep();
     rainbowTitle.stop();
-
+    
     console.log(`
     ${chalk.bgBlue('HOW IT WORKS ')} 
     1. Download your whatsapp backup file in .zip format.
@@ -97,12 +102,14 @@ async function unzipBackup() {
     const spinner = createSpinner('Unzipping backup....').start();
 
     await new Promise((resolve, reject) => {
-        createReadStream(backupFile).pipe(Extract({ path: `./${outputDir}/output` }).on('close', () => {
-            spinner.success({ text: `Unzip completed` });
-            resolve()
-        }))
-    })
-
+            decompress(backupFile, `./${outputDir}/output`).then(files => {
+                spinner.success({ text: `Unzip completed` });
+                resolve()
+            }).catch(err => {
+                spinner.fail({ text: `Unzip failed` });
+                reject(err)
+            })
+        })
 }
 async function readChatFile() {
     processSpinner.start()
@@ -129,9 +136,11 @@ async function processChat() {
     processSpinner.success({ text: `Chat successfully processed` });
     processSpinner.stop();
     generatingChatSpinner.start()
+        
     await parseString(chatContent, { parseAttachments: true })
-        .then(messages => {
+        .then(async messages => {
             messages.shift() //remove first message (whatsapp notice)
+            await addLinkPreview(messages)
             messages.map((message, i, arr) => {
                 const prevMessage = arr[i - 1];
                 const  date = new Date(message.date)
@@ -163,6 +172,7 @@ async function processChat() {
                     processedMessages.push({
                         ...message,
                         message: linkifyHtml(message.message, options),
+                        edited: message.message.includes("<This message was edited>") ? true : false,
                         fileMimeType: '',
                         date: new Intl.DateTimeFormat('en-US', intlOptions).format(message.date),
                         activeUser: message.author == activeUser ? true : false,
@@ -179,6 +189,24 @@ async function processChat() {
         });
 
 }
+async function addLinkPreview(messages) {
+    return await Promise.all(messages.map(async (message, i, arr) => {
+                try{
+                    let link = linkifyHtml(message.message, options).match(/(https?:\/\/[^\s]+)/g)
+                    if(link[0]){
+                        let clean_link = link[0].replace('"', '').toLocaleLowerCase().trim()
+                        const link_preview = await getLinkPreview(clean_link)
+                        if(link_preview){
+                            message["link_preview"] = link_preview
+                        }
+                    }
+                }catch(err){
+                    //ignore
+                }
+                return message
+            }))
+}
+
 async function askActiveUser() {
     const answers = await inquirer.prompt({
         name: 'active_user',
@@ -202,7 +230,8 @@ async function askPhoneNumber() {
 }
 
 async function renderChat(messages, phone_number) {
-    let chat = await Eta.renderFile("./layout", { messages: messages, phone_number: phone_number })
+    const phone_number_masked = maskPhoneNumber(phone_number);
+    let chat = await Eta.renderFile("./layout", { messages: messages, phone_number: phone_number_masked })
     writeFile(`./${outputDir}/index.html`, chat, err => {
         if (err) {
             return console.error(`Failed to generate file: ${err.message}.`);
@@ -212,6 +241,7 @@ async function renderChat(messages, phone_number) {
 async function convertOpusToMp3() {
     const spinner = createSpinner('Converting audio files....').start();
     const files = readdirSync(`./${outputDir}/output`)
+
     for (const file of files) {
         if (file.endsWith('.opus')) {
             const fileName = file.split('.')[0]
@@ -225,7 +255,7 @@ async function convertOpusToMp3() {
                         resolve()
                     })
                     .on('error', (err) => {
-                        spinner.fail({ text: `${fileName} failed to convert to mp3` });
+                        spinner.error({ text: `${fileName} failed to convert to mp3` });
                         reject(err)
                     })
                     .save(outputPath)
@@ -285,6 +315,31 @@ const getMimeType = fileName => {
 
     return null;
 };
+
+const maskPhoneNumber = (phone_number) => {
+    if (typeof phone_number !== "string") {
+        throw new Error("phone_number must be a string");
+    }
+    //convert string to array
+    let phone_number_array = phone_number.split("");
+    //get number of digits in phone number
+    let number_of_digits_in_phone_number = phone_number_array.filter(
+        function (value) {
+            return !isNaN(value);
+        }
+    ).join("").length;
+    //replace last 6 digits with *
+    let phone_number_masked = phone_number_array.map(
+        function (value, index) {
+            if (index >= number_of_digits_in_phone_number - 6 && !isNaN(value) && value != " ") {
+                return "X";
+            }
+            return value;
+        }
+    ).join("");
+    return phone_number_masked;
+
+}
 
 await welcome();
 await askBackup();

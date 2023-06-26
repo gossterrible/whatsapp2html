@@ -5,22 +5,38 @@
         </div>
    </li>
 <% } else if (it.activeUser === true) { %>
-<li class="style__Item-sc-10xojq4-0 lhojvt">
+<li class="style__Item-sc-10xojq4-0 lhojvt active-user">
     <div class="style__Bubble-sc-10xojq4-1 jezoRX">
         <div class="style__Wrapper-sc-10xojq4-2 bTFExH">
+           <% if (it.link_preview && it.link_preview.contentType ==="text/html" ) {%>
+            <div class="link-preview-container" style="background-color: rgb(209, 244, 204);">
+                    <span class="link-preview-title"><%=  it.link_preview.title %></span>
+                    <span class="link-preview-description"><% if (it.link_preview.description) { %><%=  it.link_preview.description %><% } %></span>
+                    <span class="url-element"><%=  it.link_preview.url %></span>
+            </div>
+            <% } %>
+
             <div class="style__Message-sc-10xojq4-4 "><% if (it.fileMimeType !== ""){ %><%~ includeFile('./attachment',  {message:it}) %><% } else { %><div class="iIXscr"> <%~ it.message %></div><% } %></div>
             <time datetime="<%=  it.date %>" class="style__Date-sc-10xojq4-5 rjqjE"><%=  it.date %></time>
+            <% if (it.edited){ %> <span  style="margin-left:0.5rem" class="rjqjE">Edited</span> <% } %>
         </div>
     </div>
 </li>
 
 <% } else { %>
-<li class="style__Item-sc-10xojq4-0 gwVsKX">
+<li class="style__Item-sc-10xojq4-0 gwVsKX inactive-user">
     <div class="style__Bubble-sc-10xojq4-1 eYnoeS">
         <div class="style__Wrapper-sc-10xojq4-2 bTFExH">
+            <% if (it.link_preview && it.link_preview.contentType ==="text/html" ) {%>
+            <div class="link-preview-container" style="background-color: rgb(245, 246, 246);" >
+                    <span class="link-preview-title"><%=  it.link_preview.title %></span>
+                    <span class="link-preview-description"><% if (it.link_preview.description) { %><%=  it.link_preview.description %><% } %></span>
+                    <span class="url-element"><%=  it.link_preview.url %></span>
+            </div>
+            <% } %>
             <div class="style__Message-sc-10xojq4-4 "><% if (it.fileMimeType !== "") { %><%~ includeFile('./attachment', {message:it}) %><% } else { %><div class="iIXscr"><%~ it.message %></div><% } %></div>
-            <time datetime="<%=  it.date %>" class="style__Date-sc-10xojq4-5 rjqjE"><%=  it.date %>
-            </time>
+            <time datetime="<%=  it.date %>" class="style__Date-sc-10xojq4-5 rjqjE"><%=  it.date %></time>
+            <% if (it.edited){ %> <span  style="margin-left:0.5rem" class="rjqjE">Edited</span> <% } %>
         </div>
     </div>
 </li>

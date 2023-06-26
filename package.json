@@ -1,6 +1,6 @@
 {
   "name": "whatsapp2html",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Convert a WhatsApp Backup chat to a html site",
   "main": "index.js",
   "type": "module",
@@ -29,14 +29,15 @@
     "@ffprobe-installer/ffprobe": "^1.4.1",
     "chalk": "^5.0.1",
     "chalk-animation": "^2.0.2",
+    "decompress": "^4.2.1",
     "eta": "^1.12.3",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4",
+    "link-preview-js": "^3.0.4",
     "linkify-html": "^3.0.5",
     "linkifyjs": "^3.0.5",
     "nanospinner": "^1.1.0",
-    "unzipper": "^0.10.11",
-    "whatsapp-chat-parser": "^3.2.1"
+    "whatsapp-chat-parser": "^3.2.1",
   }
 }
