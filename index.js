@@ -3,9 +3,8 @@
 import * as Eta from "eta"
 import *  as fs from "fs-extra";
 
-import { createReadStream, readFileSync, readdirSync, writeFile } from 'fs';
+import { readFileSync, readdirSync, writeFile } from 'fs';
 
-import { Extract } from "unzipper";
 import Ffmpeg from "fluent-ffmpeg";
 import chalk from "chalk";
 import chalkAnimation from "chalk-animation";
@@ -20,7 +19,7 @@ import linkifyHtml from 'linkify-html';
 import { parseString } from "whatsapp-chat-parser"
 import path from "path";
 
-const VERSION = '1.0.20';
+const VERSION = '1.0.21';
 
 
 Ffmpeg.setFfprobePath(ffprobe.path);
@@ -194,8 +193,12 @@ async function addLinkPreview(messages) {
                 try{
                     let link = linkifyHtml(message.message, options).match(/(https?:\/\/[^\s]+)/g)
                     if(link[0]){
+                       
                         let clean_link = link[0].replace('"', '').toLocaleLowerCase().trim()
+                        console.log(clean_link)
+
                         const link_preview = await getLinkPreview(clean_link)
+                         console.log(link_preview)
                         if(link_preview){
                             message["link_preview"] = link_preview
                         }
