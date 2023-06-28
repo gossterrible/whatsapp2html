@@ -45,6 +45,8 @@ let backupFile;
 let chatContent;
 let activeUser;
 let phone_number;
+let other_user_name;
+let profile_picture;
 let users = [];
 let processedMessages = [];
 let outputDir;
@@ -195,10 +197,7 @@ async function addLinkPreview(messages) {
                     if(link[0]){
                        
                         let clean_link = link[0].replace('"', '').toLocaleLowerCase().trim()
-                        console.log(clean_link)
-
                         const link_preview = await getLinkPreview(clean_link)
-                         console.log(link_preview)
                         if(link_preview){
                             message["link_preview"] = link_preview
                         }
@@ -231,10 +230,32 @@ async function askPhoneNumber() {
     });
     phone_number = answers.phone_number;
 }
+async function askOtherUserName() {
+    const answers = await inquirer.prompt({
+        name: 'other_user_name',
+        type: 'string',
+        message: 'Other user name (name to display in chat header):',
+        default() {
+            return 'John Doe';
+        },
+    });
+    other_user_name = answers.other_user_name;
+}
+async function askForProfilePictureFilePath() {
+    const answers = await inquirer.prompt({
+        name: 'profile_picture',
+        type: 'string',
+        message: 'Profile picture file path example: profile.jpg (leave empty for default profile picture)',
+        default() {
+            return './profile.jpg';
+        },
+    });
+    profile_picture = answers.profile_picture;
+}
 
-async function renderChat(messages, phone_number) {
+async function renderChat(messages, phone_number, other_user_name) {
     const phone_number_masked = maskPhoneNumber(phone_number);
-    let chat = await Eta.renderFile("./layout", { messages: messages, phone_number: phone_number_masked })
+    let chat = await Eta.renderFile("./layout", { messages: messages, phone_number: phone_number_masked,other_user_name:other_user_name })
     writeFile(`./${outputDir}/index.html`, chat, err => {
         if (err) {
             return console.error(`Failed to generate file: ${err.message}.`);
@@ -292,6 +313,24 @@ async function copyStaticFiles() {
             resolve()
         })
     })
+    await new Promise((resolve, reject) => {
+        fs.copy(path.resolve(__dirname, 'js/zoom.js'), `./${outputDir}/js/zoom.js`, (err) => {
+            if (err) {
+                reject(err)
+            }
+            resolve()
+        })
+    })
+    if (profile_picture) {
+        await new Promise((resolve, reject) => {
+            fs.copy(profile_picture, `./${outputDir}/img/profile.jpg`, (err) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
+    }
     generatingChatSpinner.success({ text: `Chat generated successfully` });
 }
 async function Done() {
@@ -325,23 +364,26 @@ const maskPhoneNumber = (phone_number) => {
     }
     //convert string to array
     let phone_number_array = phone_number.split("");
-    //get number of digits in phone number
-    let number_of_digits_in_phone_number = phone_number_array.filter(
-        function (value) {
-            return !isNaN(value);
-        }
-    ).join("").length;
-    //replace last 6 digits with *
-    let phone_number_masked = phone_number_array.map(
-        function (value, index) {
-            if (index >= number_of_digits_in_phone_number - 6 && !isNaN(value) && value != " ") {
-                return "X";
+    
+    let seventh_digit_position = phone_number_array
+        .map(function (value, index) {
+            if (!isNaN(value) && value != " ") {
+                return index;
             }
-            return value;
         }
-    ).join("");
-    return phone_number_masked;
-
+        )
+        .filter(function (value) {
+            if (value != undefined) {
+                return true;
+            }
+        }
+        )[6];
+    for (let i = seventh_digit_position; i < phone_number_array.length; i++) {
+            if (!isNaN(phone_number_array[i]) && phone_number_array[i] != " ") {
+                phone_number_array[i] = "X";
+            }
+    }
+    return phone_number_array.join("");
 }
 
 await welcome();
@@ -352,8 +394,10 @@ await convertOpusToMp3();
 await readChatFile();
 await getUsers();
 await askActiveUser();
+await askOtherUserName();
 await askPhoneNumber();
+await askForProfilePictureFilePath();
 await processChat();
-await renderChat(processedMessages, phone_number)
+await renderChat(processedMessages, phone_number, other_user_name)
 await copyStaticFiles();
 await Done();

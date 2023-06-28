@@ -620,3 +620,102 @@ body,
   margin-bottom: 2px;
   font-size: 12px;
 }
+.avatar{
+  margin-left: 1.5rem;
+  margin-right: .5rem;
+  width: 50px;
+  border-radius: 100%;
+}
+.other_user_details{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+/* tablets and below */
+@media (max-width: 991px) {
+  .back-arrow{
+    width:14px
+  }
+  .avatar{
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    width: 35px;
+    border-radius: 100%;
+  }
+  .other-icons{
+      width: 75px;
+  }
+  .other_user_details{
+    font-size: 0.8rem;
+  }
+}
+
+/* The Modal (background) */
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    display: none;
+    left: 0;
+    top: 0;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: hidden; /* Enable scroll if needed */
+    background-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0.96)
+}
+
+/* Modal Content (image) */
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 75vh;
+    max-width: 75%;
+}
+
+.out {
+  animation-name: zoom-out;
+  animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {-webkit-transform:scale(1)}
+    to {-webkit-transform:scale(2)}
+}
+
+@keyframes zoom {
+    from {transform:scale(0.4)}
+    to {transform:scale(1)}
+}
+
+@keyframes zoom-out {
+    from {transform:scale(1)}
+    to {transform:scale(0)}
+}
+
+/* The Close Button */
+.modal-header {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 10px;width: 100%;
+    justify-content: space-between;
+    padding: 0px 10px;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+    .modal-content {
+        width: 100%;
+    }
+}
