@@ -225,8 +225,9 @@ async function askPhoneNumber() {
         type: 'string',
         message: 'Phone number:',
         default() {
-            return '+92 316 8664208';
+            return '';
         },
+
     });
     phone_number = answers.phone_number;
 }
