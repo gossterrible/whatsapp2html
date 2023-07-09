@@ -248,7 +248,7 @@ async function askForProfilePictureFilePath() {
         type: 'string',
         message: 'Profile picture file path example: profile.jpg (leave empty for default profile picture)',
         default() {
-            return './profile.jpg';
+            return '';
         },
     });
     profile_picture = answers.profile_picture;
@@ -325,6 +325,15 @@ async function copyStaticFiles() {
     if (profile_picture) {
         await new Promise((resolve, reject) => {
             fs.copy(profile_picture, `./${outputDir}/img/profile.jpg`, (err) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
+    }else{
+        await new Promise((resolve, reject) => {
+            fs.copy(path.resolve(__dirname, 'img/profile.jpg'), `./${outputDir}/img/profile.jpg`, (err) => {
                 if (err) {
                     reject(err)
                 }
