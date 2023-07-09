@@ -19,7 +19,7 @@ import linkifyHtml from 'linkify-html';
 import { parseString } from "whatsapp-chat-parser"
 import path from "path";
 
-const VERSION = '1.0.23';
+const VERSION = '1.0.24';
 
 
 Ffmpeg.setFfprobePath(ffprobe.path);
