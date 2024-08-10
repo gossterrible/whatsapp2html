@@ -113,8 +113,14 @@ async function unzipBackup() {
         })
 }
 async function readChatFile() {
-    processSpinner.start()
-    chatContent = readFileSync(`./${outputDir}/output/_chat.txt`, 'utf8');
+    processSpinner.start();
+    const files = readdirSync(`./${outputDir}/output`);
+    const txtFile = files.find(file => file.endsWith('.txt'));
+    if (txtFile) {
+        chatContent = readFileSync(`./${outputDir}/output/${txtFile}`, 'utf8');
+    } else {
+        console.log('No .txt file found in the directory.');
+    }
 }
 async function getUsers() {
     await parseString(chatContent, { parseAttachments: true })
