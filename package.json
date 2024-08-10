@@ -1,6 +1,6 @@
 {
   "name": "whatsapp2html",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Convert a WhatsApp Backup chat to a html site",
   "main": "index.js",
   "type": "module",
